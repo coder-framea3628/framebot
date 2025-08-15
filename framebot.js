@@ -1,0 +1,300 @@
+<!-- ===== Injetar CSS ===== -->
+const style = document.createElement('style');
+style.textContent = `
+body{font-family:Montserrat,sans-serif;margin:0}
+.c{position:fixed;bottom:10px;right:10px;width:360px;max-width:95%;height:80%;background:#fff;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden;z-index:9999}
+.h{background:#AC865C;color:#fff;padding:12px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:16px;position:relative}
+.h img{width:54px;height:54px;border-radius:50%;border:2px solid #fff}
+.m{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:22px;line-height:1}
+.menu-icon{display:flex;flex-direction:column;gap:3px;cursor:pointer}
+.menu-icon span{width:18px;height:2px;background:#fff;display:block;border-radius:2px}
+.b{flex:1;padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.l{font-family:Inter,sans-serif;font-size:11px;color:#888;text-align:center}
+.msg{display:flex;gap:6px;animation:f .3s}
+.msg img{width:26px;height:26px;border-radius:50%}
+.msg.user-msg{justify-content:flex-end}
+.bb{background:#f0f0f0;padding:8px 12px;border-radius:14px;max-width:80%}
+.bt{display:block;font-size:10px;color:#999;margin-top:4px}
+.user-msg .bb{background:#AC865C;color:#fff}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.btn{padding:8px 12px;border-radius:18px;cursor:pointer;font-size:13px;border:2px solid #AC865C;background:#fff;color:#AC865C}
+.btn:hover{background:#AC865C;color:#fff}
+.p{background:#AC865C;color:#fff;font-weight:600}
+.f{font-size:11px;padding:6px;border-top:1px solid #ddd;text-align:center;line-height:14px;margin-bottom:8px}
+.f a,.link{color:#AC865C;font-weight:600;text-decoration:underline;text-decoration-thickness:1px}
+.o{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10000;animation:fadein .3s}
+.oc{background:#fff;padding:24px;border-radius:10px;text-align:center;display:flex;flex-direction:column;gap:14px;min-width:240px;position:relative;top:50px}
+.oc button{padding:10px 16px;background:#AC865C;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600}
+.close-x{position:absolute;top:10px;right:10px;font-size:18px;cursor:pointer;color:#888}
+
+/* input + botão enviar */
+.input-box{display:flex;align-items:center;gap:8px;margin:4px 8px 6px;padding:8px 12px;background:#AC865C;border-radius:20px}
+.input-box input{border:none;outline:none;flex:1;background:none;color:#fff;font-size:17px}
+.input-box input::placeholder{color:#fff;opacity:0.7}
+.send-btn{border:none;background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;outline:none}
+.send-btn svg{width:22px;height:22px}
+.send-btn:focus-visible{box-shadow:0 0 0 2px rgba(255,255,255,.6)}
+/* ícone branco de traços finos */
+.send-btn path{stroke:#fff;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* simulador de digitação */
+.typing-label{font-family:Inter,sans-serif;font-size:11px;color:#888;text-align:left;margin-left:32px}
+.typing-bubble .bb{background:#f0f0f0}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:#fff;opacity:.35;animation:blink 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%{opacity:.2;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}100%{opacity:.2;transform:translateY(0)}}
+
+.center-end{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;color:#888;animation:fadein .5s}
+.semibold{font-weight:600}
+@keyframes f{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@media(max-width:480px){.c{height:90%;width:95%;right:2.5%;bottom:5%}}
+@media (prefers-reduced-motion: reduce){
+  .msg{animation:none}
+  .dot{animation:none}
+}
+`;
+document.head.appendChild(style);
+
+// ===== Injetar HTML =====
+const chatContainer = document.createElement('div');
+chatContainer.innerHTML = `
+<div class="c" id="cb">
+  <div class="h">
+    <img src="https://framerusercontent.com/images/uvgx4LpdArstEFjK7yhfEcgIEo.png">Atendimento | Frame
+    <div class="m" onclick="openMenu()">
+      <div class="menu-icon">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+  <div class="b" id="bd"></div>
+  <div class="input-box">
+    <input type="text" id="userInput" placeholder="Digite sua mensagem…" aria-label="Mensagem">
+    <button class="send-btn" id="sendBtn" aria-label="Enviar">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3a9 9 0 1 1 0 18a9 9 0 0 1 0-18zM12 8v8M9.5 10.5L12 8l2.5 2.5"/>
+      </svg>
+    </button>
+  </div>
+  <div class="f">
+    Ao continuar neste chat, você concorda<br>
+    com os <a href="https://frameag.com/termos" target="_blank" class="link">Termos e Condições</a> da Frame.
+  </div>
+</div>
+<div class="o" id="ov">
+  <div class="oc" id="menuOverlay">
+    <div class="close-x" onclick="closeMenu()">✕</div>
+    <button onclick="location.href='https://frameag.com.br'">Voltar para o catálogo</button>
+    <button onclick="open('https://t.me/suporteframebot?start=chatbot-site','_blank')">Ir para atendimento humano</button>
+  </div>
+</div>
+<div id="chatEnd" class="center-end" style="display:none;">Este chat foi encerrado.</div>
+`;
+document.body.appendChild(chatContainer);
+
+// ===== Util: delay realista =====
+function realisticDelayFor(text){
+  const words = (text || '').replace(/<[^>]+>/g,'').trim().split(/\s+/).filter(Boolean).length;
+  const base = 350;              // “respiro” inicial
+  const perWord = 45;            // ~45 ms por palavra
+  const jitter = Math.random()*180; // variação natural
+  return Math.min(2800, base + words*perWord + jitter);
+}
+
+// ===== Área do chat =====
+const b = document.getElementById('bd'),
+      p = "https://framerusercontent.com/images/uvgx4LpdArstEFjK7yhfEcgIEo.png",
+      chatEndMsg = document.getElementById('chatEnd');
+
+// ===== Simulador de digitação =====
+let typingRefs = null;
+function showTyping(){
+  // label "Digitando…"
+  const label = document.createElement('div');
+  label.className = 'l typing-label';
+  label.textContent = 'Digitando…';
+
+  // bubble com 3 bolinhas
+  const wrap = document.createElement('div');
+  wrap.className = 'msg typing-bubble';
+  const avatar = document.createElement('img');
+  avatar.src = p;
+
+  const bb = document.createElement('div');
+  bb.className = 'bb';
+  const dots = document.createElement('div');
+  dots.className = 'dots';
+  dots.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+  bb.appendChild(dots);
+
+  wrap.append(avatar, bb);
+  b.append(label, wrap);
+  b.scrollTop = b.scrollHeight;
+
+  typingRefs = {label, wrap};
+}
+function hideTyping(){
+  if(!typingRefs) return;
+  typingRefs.label.remove();
+  typingRefs.wrap.remove();
+  typingRefs = null;
+}
+/** Para iniciar um fluxo com digitação */
+function amFlowStart(text, btn=null, user=false, typingMs=1800){
+  showTyping();
+  setTimeout(()=>{ hideTyping(); am(text, btn, 'auto', user); }, typingMs);
+}
+
+// ===== Função principal de mensagem =====
+function am(text, btn, delay = 0, user = false) {
+  const finalDelay = (delay === 'auto') ? realisticDelayFor(text) : (delay||0);
+  setTimeout(() => {
+    let m = document.createElement('div');
+    m.className = 'msg' + (user ? ' user-msg' : '');
+    let i = document.createElement('img');
+    i.src = user ? '' : p;
+    let bb = document.createElement('div');
+    bb.className = 'bb';
+    bb.innerHTML = text + '<span class="bt">agora</span>';
+    if (btn) {
+      let w = document.createElement('div');
+      w.className = 'btns';
+      btn.forEach(o => {
+        let b2 = document.createElement('div');
+        b2.className = 'btn' + (o.p ? ' p' : '');
+        b2.innerText = o.l;
+        b2.onclick = o.a;
+        w.appendChild(b2);
+      });
+      bb.appendChild(w);
+    }
+    if(user){ m.append(bb); } else { m.append(i, bb); }
+    b.appendChild(m);
+    b.scrollTop = b.scrollHeight;
+  }, finalDelay);
+}
+
+// ===== Função de satisfação =====
+function perguntarSatisfacao() {
+  am("Minha explicação acima te ajudou?", [
+    { l: "Sim, tudo esclarecido", p: 1, a: () => {
+        am("Perfeito! Agradecemos pelo contato, estamos sempre à disposição.", null, 'auto');
+        setTimeout(() => { chatEndMsg.style.display = 'block'; }, 800);
+      }},
+    { l: "Não, preciso de ajuda", a: () => { 
+        fh(); 
+        am('Se preferir, você também pode enviar um email para: <span class="semibold link">contato@frameag.com</span>', null, 'auto'); 
+      }}
+  ], 'auto');
+}
+
+// ===== Enviar (Enter + Botão) =====
+function handleSend(){
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = "";
+  am(text, null, 0, true);
+  am("Não consegui entender sua solicitação. Vamos tentar novamente?", [
+    { l: "Voltar", p: 1, a: () => { 
+        inicio(); 
+        am('Se preferir, você também pode enviar um email para: <span class="semibold link">contato@frameag.com</span>', null, 'auto'); 
+      }}
+  ], realisticDelayFor("Não consegui entender sua solicitação. Vamos tentar novamente?"));
+}
+document.getElementById('userInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') handleSend();
+});
+document.getElementById('sendBtn').addEventListener('click', handleSend);
+
+// ===== Fluxos por idioma =====
+function menuPT() {
+  b.innerHTML = '<div class="l">Chat ao vivo</div>';
+  amFlowStart("É ótimo ter você em nossa plataforma.");
+  am("Me conta, qual é a sua relação com a Frame hoje?", [
+    { l: "Contratante / Assinante", p: 1, a: cmPT },
+    { l: "Criadora / Anunciante", a: crPT }
+  ], 'auto');
+}
+
+function cmPT() {
+  b.innerHTML = '<div class="l">Chat ao vivo</div>';
+  amFlowStart("Certo! Veja como posso ajudar...");
+  am("Selecione uma opção:", [
+    { l: "Quero contratar uma modelo", p: 1, a: ctPT },
+    { l: "Sobre segurança", a: () => { 
+        amFlowStart('Você pode ter se perguntado se a Frame é segura, e sim, é. A Frame garante autenticação em três etapas e conta com um time de segurança em alerta 24h, <a href=https://frameag.com/blog/verificacao target=_blank class=link>Saiba mais</a>');
+        setTimeout(perguntarSatisfacao, 800);
+      }},
+    { l: "Reportar modelo anonimamente", a: () => { 
+        amFlowStart('Na Frame, levamos segurança muito a sério. Caso encontre irregularidades em anúncios do nosso site, acesse <a href=https://frameag.com/report target=_blank class=link>frameag.com/report</a> e denuncie anonimamente.');
+        setTimeout(perguntarSatisfacao, 800);
+      }},
+    { l: "Falar com humano", a: () => { 
+        fh(); 
+        am('Se preferir, você também pode enviar um email para: <span class="semibold link">contato@frameag.com</span>', null, 'auto'); 
+      }},
+    { l: "Voltar", a: inicio },
+    { l: "Quero me tornar Premium", p: 1, a: premiumPT }
+  ], 'auto');
+}
+
+// ===== Novo fluxo Premium =====
+function premiumPT() {
+  amFlowStart('No <span class="semibold">Premium</span>, você desbloqueia vantagens que ninguém mais pode ter. Deixa eu te contar:');
+  am('Acesso ao catálogo completo, Galerias Sexy, atendimento prioritário e muito mais.', null, 'auto');
+  am('Para se tornar <span class="semibold">Premium</span>, clique abaixo.', [{ l: "Quero ser Premium", p: 1, a: () => window.open('https://frameag.com/premium','_blank') }], 'auto');
+}
+
+// ===== Atualização do fluxo de contratar modelo =====
+function ctPT() {
+  b.innerHTML = '<div class="l">Chat ao vivo</div>';
+  amFlowStart("Você possui 18 anos ou mais?");
+  am("", [
+    { l: "Sim", p: 1, a: () => { 
+        amFlowStart('Certo. Antes de contratar, você pode conhecer todas as modelos em nosso <a href="https://frameag.com/models" target="_blank" class="link">catálogo completo</a>.');
+        am("Mas, se quiser contratar, fale com o nosso time de atendimento:", [{ l: "Ir para atendimento 24h", p: 1, a: () => open('https://t.me/suporteframebot?start=catalogo-site', '_blank') }], 'auto');
+        setTimeout(perguntarSatisfacao, 800);
+      }},
+    { l: "Não", a: () => { 
+        amFlowStart("O ecossistema da Frame deve ser usado exclusivamente por maiores de 18 anos.");
+        setTimeout(perguntarSatisfacao, 800);
+      }}
+  ], 0);
+}
+
+function crPT() {
+  b.innerHTML = '<div class="l">Chat ao vivo</div>';
+  amFlowStart("Perfeito, vou te passar as principais informações para criadoras.");
+  am('Para se cadastrar, acesse <a href=https://frameag.com/login target=_blank class=link>frameag.com/login</a> e siga as instruções.', null, 'auto');
+  am('Lembre-se: É necessário ter mais de 18 anos, aceitar nossos <a href=https://frameag.com/termos target=_blank class=link>Termos e Condições</a> e seguir as diretrizes de conteúdo.', null, 'auto');
+  am('Se precisar de qualquer ajuda adicional, acesse sua <a href=https://frameag.com/login target=_blank class=link>Área de Login</a> e clique em "Central de Atendimento".', [
+    { l: "Voltar", a: inicio }
+  ], 'auto');
+  setTimeout(perguntarSatisfacao, 2600);
+}
+
+function fh() { 
+  amFlowStart("Claro! Vou te direcionar agora para um atendente da Frame.");
+  am("", [{ l: "Ir para atendimento", p: 1, a: () => open('https://t.me/suporteframebot?start=chatbot-site', '_blank') }], 'auto'); 
+}
+
+// ===== Idiomas =====
+function inicio() {
+  b.innerHTML = '<div class="l">Chat ao vivo</div>';
+  amFlowStart("Olá, boas-vindas ao atendimento virtual da Frame :)");
+  am("Estamos aqui para te ajudar 24 horas por dia!", null, 'auto');
+  am("Selecione seu idioma:", [
+    { l: "Português", p: 1, a: menuPT },
+    { l: "English", a: () => alert("Visit frameag.com/en for English support.") },
+    { l: "Español", a: () => alert("Visite: frameag.com/es para atención en español.") }
+  ], 'auto');
+}
+window.onload = inicio;
+
+// ===== Menu overlay =====
+function openMenu(){ document.getElementById('ov').style.display = 'flex'; }
+function closeMenu(){ document.getElementById('ov').style.display = 'none'; }
