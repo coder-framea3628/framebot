@@ -29,7 +29,7 @@ fontLink.rel = 'preload';
 fontLink.as = 'style';
 fontLink.onload = function() { this.rel = 'stylesheet'; };
 document.head.appendChild(fontLink);
-// ===== Injetar CSS =====
+// ===== Injetar CSS  =====
 const style = document.createElement('style');
 style.textContent = `
 :root {
@@ -672,23 +672,22 @@ body {
 }
 .emoji-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  padding: 16px;
-  overflow-y: auto;
+  padding: 10px;
 }
 .emoji-btn-grid {
   font-size: 20px;
   background: none;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s, transform 0.2s;
 }
-.emoji-btn-grid:hover {
-  transform: scale(1.2);
-}
-#emojiSearch {
-  font-size: 16px;
+.emoji-btn-grid.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 .timer-note {
   font-size: 14px;
@@ -796,170 +795,156 @@ body {
 }
 #emojiOverlay {
   position: absolute;
+  top: auto;
   bottom: calc(100% + 10px);
   right: 0;
   width: 300px;
   height: auto;
-  background: var(--secondary-bg);
-  border-radius: 16px;
-  box-shadow: 0 4px 15px var(--shadow-color);
-  padding: 12px;
-  z-index: 10001;
-}
-#emojiOverlay .oc {
-  min-width: auto;
-  max-width: none;
-  min-height: auto;
-  padding: 0;
-}
-#emojiOverlay .close-x {
-  top: 5px;
-  right: 5px;
-}
-.chat-starter {
-  text-align: center;
-  font-size: 10px;
-  color: var(--typing-color);
-  opacity: 0.8;
-  margin-bottom: 8px;
-}
-#historySearch {
-  padding: 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 12px;
-}
-#historyResults {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   max-height: 200px;
   overflow-y: auto;
+  background: transparent;
+  display: none;
 }
-.history-item {
-  background: var(--msg-bg);
-  padding: 8px 12px;
-  border-radius: 16px;
-  font-size: 12px;
+#emojiOverlay .oc {
+  border-radius: 8px;
+  background: var(--secondary-bg);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  padding: 10px;
 }
-.copy-link-btn {
-  margin-left: 8px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  background: var(--accent-light);
-  color: #fff;
-  cursor: pointer;
-  font-size: 12px;
+#emojiOverlay.show {
+  display: flex !important;
+  background: var(--secondary-bg);
 }
-.copy-link-btn:hover {
-  background: var(--accent-color);
+#emojiSearch, #feedbackText, input[type="date"], #searchResults input {
+  font-size: 16px !important;
 }
-#closePopup {
+#emojiSearch:focus, #feedbackText:focus, input[type="date"]:focus {
+  border: 1px solid var(--accent-color) !important;
+  box-shadow: 0 0 0 2px rgba(171,134,91,0.15) !important;
+  outline: none !important;
+}
+.chat-start {
+  text-align: center;
+  color: var(--typing-color);
+  font-size: 10px;
+  margin-bottom: 10px;
+}
+.close-popup {
+  display: none;
   position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 200px;
   background: var(--secondary-bg);
   border-radius: 8px;
-  box-shadow: 0 4px 15px var(--shadow-color);
-  padding: 12px;
-  width: 200px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  padding: 10px;
+  animation: fadeIn 0.3s;
   z-index: 10001;
-  display: none;
-  flex-direction: column;
-  gap: 8px;
 }
-#closePopup button {
+.close-popup button {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: none;
+  text-align: left;
+  border-radius: 4px;
+  transition: background 0.2s;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
-#closePopup button:hover {
-  background: var(--accent-color);
+.close-popup button:hover {
+  background: var(--accent-light);
   color: #fff;
 }
-#closePopup button svg {
+.close-popup button svg {
   width: 16px;
   height: 16px;
+  stroke: currentColor;
 }
 #feedbackOverlay .oc {
+  border-radius: 16px;
+  max-width: 400px;
+  width: 90%;
   padding: 20px;
-  align-items: flex-start;
   text-align: left;
 }
-#feedbackTitle {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-#feedbackSubtitle {
-  font-size: 0.9rem;
-  color: var(--typing-color);
-}
-#ratingLabel {
-  font-size: 1rem;
-  text-align: center;
-  width: 100%;
+#feedbackOverlay.show {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
 }
 .rating-buttons {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin: 12px 0;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
-.rating-btn {
+.rating-buttons button {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  color: #fff;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s ease;
-  color: #fff;
+  transition: transform 0.2s;
 }
-.rating-btn:hover {
+.rating-buttons button:hover {
   transform: scale(1.1);
 }
-.rating-btn.rating-1 {
-  background: #ff4d4d;
-}
-.rating-btn.rating-2 {
-  background: #ff9966;
-}
-.rating-btn.rating-3 {
-  background: #ffcc00;
-}
-.rating-btn.rating-4 {
-  background: #99cc00;
-}
-.rating-btn.rating-5 {
-  background: #4caf50;
-}
-#feedbackOptions {
-  display: none;
-  flex-direction: column;
-  gap: 8px;
-}
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+#feedbackOptions label {
+  display: block;
+  margin: 5px 0;
 }
 #feedbackText {
   width: 100%;
-  min-height: 80px;
-  padding: 10px;
+  height: 80px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
+  padding: 10px;
   font-size: 16px;
-  resize: vertical;
+  resize: none;
 }
-#submitFeedback {
+#searchResults {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+#searchResults div {
+  padding: 8px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+}
+.copy-link {
+  margin-left: 5px;
+  padding: 2px 6px;
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+}
+@media (max-width: 480px) {
+  #feedbackOverlay .oc {
+    width: 90%;
+  }
+}
+.canvas-game {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+}
+.game-over {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
 }
 `;
 document.head.appendChild(style);
@@ -1036,10 +1021,10 @@ chatContainer.innerHTML = `
   </div>
 </div>
 <div class="warning-note" id="inputWarning" style="display:none;">Complete a etapa acima para digitar</div>
-<div id="emojiOverlay" style="display:none;">
+<div id="emojiOverlay" class="o" role="dialog" aria-modal="true">
   <div class="oc">
     <div class="close-x" onclick="closeEmojiOverlay()" role="button" aria-label="Fechar emojis">✕</div>
-    <input type="text" id="emojiSearch" placeholder="Pesquisar emoji..." oninput="filterEmojis()" style="font-size: 16px;">
+    <input type="text" id="emojiSearch" placeholder="Pesquisar emoji..." oninput="filterEmojis()">
     <div class="emoji-grid" id="emojiGrid"></div>
   </div>
 </div>
@@ -1084,7 +1069,7 @@ chatContainer.innerHTML = `
 </div>
 <div class="close-popup" id="closeOverlay">
   <button onclick="resetFlow()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.65 6.35C16.2 4.4 14.21 3.5 12 3.5c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
     Reiniciar Chat
   </button>
   <button onclick="exportHistory()">
@@ -1099,21 +1084,26 @@ chatContainer.innerHTML = `
 <div class="o" id="feedbackOverlay" role="dialog" aria-modal="true">
   <div class="oc">
     <div class="close-x" onclick="closeFeedbackPopup()" role="button" aria-label="Fechar feedback">✕</div>
-    <h2 id="feedbackTitle">Avalie sua experiência</h2>
-    <p id="feedbackSubtitle">Valorizamos o feedback de nossos usuários.</p>
-    <p id="ratingLabel">Qual sua nota para o chat ao vivo?</p>
+    <h2>Avalie sua experiência</h2>
+    <p>Valorizamos o feedback de nossos usuários.</p>
+    <p>Qual sua nota para o chat ao vivo?</p>
     <div class="rating-buttons">
-      <button class="rating-btn rating-1" onclick="selectRating(1)">1</button>
-      <button class="rating-btn rating-2" onclick="selectRating(2)">2</button>
-      <button class="rating-btn rating-3" onclick="selectRating(3)">3</button>
-      <button class="rating-btn rating-4" onclick="selectRating(4)">4</button>
-      <button class="rating-btn rating-5" onclick="selectRating(5)">5</button>
+      <button onclick="selectRating(1)" style="background: #ff4d4d">1</button>
+      <button onclick="selectRating(2)" style="background: #ff7733">2</button>
+      <button onclick="selectRating(3)" style="background: #ffcc00">3</button>
+      <button onclick="selectRating(4)" style="background: #99cc00">4</button>
+      <button onclick="selectRating(5)" style="background: #4caf50">5</button>
     </div>
-    <div id="feedbackOptions" style="display:none;">
-      <!-- Checkboxes serão inseridos dinamicamente -->
+    <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+      <span>Ruim</span>
+      <span>Ótimo</span>
     </div>
-    <textarea id="feedbackText" placeholder="Escreva um feedback, como quiser (opcional)"></textarea>
-    <button id="submitFeedback" class="btn p" onclick="submitFeedback()">Enviar</button>
+    <div id="feedbackOptions" style="display:none; margin-top: 15px;">
+      <p id="feedbackTitle"></p>
+      <div id="checkboxes"></div>
+      <textarea id="feedbackText" placeholder="Escreva um feedback, como quiser" rows="3"></textarea>
+      <button onclick="sendFeedback()">Enviar</button>
+    </div>
   </div>
 </div>
 `;
@@ -1444,7 +1434,7 @@ function showTypingIndicator(delay) {
   b.scrollTop = b.scrollHeight;
   return typing;
 }
-// ===== Adicionar mensagem =====
+// ===== Adicionar mensagem  =====
 function am(text, btn = null, delay = 0, user = false, timestamp = new Date().toISOString()) {
   let typingEl;
   const typingDelay = Math.min(2000, text.length * 50 + 600); // Delay proporcional ao texto
@@ -1511,7 +1501,7 @@ function processUserMessage(text) {
   if (sending || isChatBlocked) return;
   sending = true;
   setTimeout(() => sending = false, 500);
-  const prohibited = /(que cu|quero cu|seu cu|pau|ppk|goza|chupa|puta|kids|kid|baby|bebe|porno infantil|porno|estupro|estuprador|buceta|caralho|foder|fode|transar|sexo|bucetinha|roubar|exterminar|cuzinho|chupetinha|viado|baitola|prostituta|bctinha|xota|cuzaum|piru|grelo|pedofilo|bct|nuds|leitada|fetiche|penis|vagina|se fuder|pepeka|piroca|gozada|pedofilia|bokete|boquete|anal|oral|bunduda|fascista|defunto|punheta|punhetao|safada|safado|sacana|siririca|rabuda|viado|priquito|milf|hacker|putaria|pornstar|onlyfans|xvideos|tortura|nazista|nazismo|maconha|cocaina|pistola|fuzil|judiar|escravizar|anus|xereca|porra|arrombado|arrombada|bctona|violencia|ameaca|drogas|ilegal)/i;
+  const prohibited = /(cu|pau|ppk|goza|chupa|puta|kids|kid|baby|bebe|porno infantil|porno|estupro|estuprador|buceta|caralho|foder|fode|transar|sexo|bucetinha|roubar|exterminar|cuzinho|chupetinha|viado|baitola|prostituta|bctinha|xota|cuzaum|piru|grelo|pedofilo|bct|nuds|leitada|fetiche|penis|vagina|se fuder|pepeka|piroca|gozada|pedofilia|bokete|boquete|anal|oral|bunduda|fascista|defunto|punheta|punhetao|safada|safado|sacana|siririca|rabuda|viado|priquito|milf|hacker|putaria|pornstar|onlyfans|xvideos|tortura|nazista|nazismo|maconha|cocaina|pistola|fuzil|judiar|escravizar|anus|xereca|porra|arrombado|arrombada|bctona|violencia|ameaca|drogas|ilegal)/i;
   let isProhibited = prohibited.test(text.toLowerCase());
   let obscuredText = text;
   if (isProhibited) {
@@ -1696,7 +1686,7 @@ Bloqueados: ${isChatBlocked ? 1 : 0}`);
     return;
   }
   if (keywords.denunciar.test(t)) {
-    am(`${previousContext}Na Frame, levamos segurança muito a sério. Caso encontre irregularidades em anúncios do nosso site, acesse <a href='https://frameag.com/report' class='link'>https://frameag.com/report</a> e denuncie anonimamente. Isso ajuda a manter a plataforma segura para todos.${isPositive ? ' Obrigada pela colaboração!' : ''}`);
+    am(`${previousContext}Na Frame, levamos segurança muito a sério. Caso encontre irregularidades em anúncios do nosso site, acesse <a href='https://frameag.com/report' class='link'>https://frameag.com/report</a>  e denuncie anonimamente. Isso ajuda a manter a plataforma segura para todos.${isPositive ? ' Obrigada pela colaboração!' : ''}`);
     perguntarSatisfacao();
     return;
   }
@@ -1854,7 +1844,7 @@ document.getElementById('sendBtn').addEventListener('click', () => {
   }
 });
 document.getElementById('emojiBtn').addEventListener('click', openEmojiOverlay);
-// ===== Perguntar satisfação =====
+// ===== Perguntar satisfação  =====
 function perguntarSatisfacao() {
   const nome = userInfo ? userInfo.name.split(' ')[0] : '';
   am(`Minha explicação ajudou a esclarecer sua dúvida, ${nome}? Estou aqui para explicar mais se necessário.`, [
@@ -2115,7 +2105,7 @@ function trapFocus(element) {
     }
   });
 }
-// ===== Error handling expandido =====
+// ===== Error handling expandido  =====
 window.addEventListener('error', (e) => {
   console.error('Erro no chatbot:', e.message);
 });
@@ -2349,7 +2339,7 @@ function confirmDeleteRecent() {
 function validateUserInput(name, email) {
   const nameInput = document.getElementById('nameInput');
   const emailInput = document.getElementById('emailInput');
-  const prohibited = /(que cu|quero cu|seu cu|pau|ppk|goza|chupa|puta|kids|kid|baby|bebe|porno infantil|porno|estupro|estuprador|buceta|caralho|foder|fode|transar|sexo|bucetinha|roubar|exterminar|cuzinho|chupetinha|viado|baitola|prostituta|bctinha|xota|cuzaum|piru|grelo|pedofilo|bct|nuds|leitada|fetiche|penis|vagina|se fuder|pepeka|piroca|gozada|pedofilia|bokete|boquete|anal|oral|bunduda|fascista|defunto|punheta|punhetao|safada|safado|sacana|siririca|rabuda|viado|priquito|milf|hacker|putaria|pornstar|onlyfans|xvideos|tortura|nazista|nazismo|maconha|cocaina|pistola|fuzil|judiar|escravizar|anus|xereca|porra|arrombado|arrombada|bctona|violencia|ameaca|drogas|ilegal)/i;
+  const prohibited = /(cu|pau|ppk|goza|chupa|puta|kids|kid|baby|bebe|porno infantil|porno|estupro|estuprador|buceta|caralho|foder|fode|transar|sexo|bucetinha|roubar|exterminar|cuzinho|chupetinha|viado|baitola|prostituta|bctinha|xota|cuzaum|piru|grelo|pedofilo|bct|nuds|leitada|fetiche|penis|vagina|se fuder|pepeka|piroca|gozada|pedofilia|bokete|boquete|anal|oral|bunduda|fascista|defunto|punheta|punhetao|safada|safado|sacana|siririca|rabuda|viado|priquito|milf|hacker|putaria|pornstar|onlyfans|xvideos|tortura|nazista|nazismo|maconha|cocaina|pistola|fuzil|judiar|escravizar|anus|xereca|porra|arrombado|arrombada|bctona|violencia|ameaca|drogas|ilegal)/i;
   let valid = true;
   if (!name) {
     nameInput.classList.add('error');
@@ -2397,18 +2387,13 @@ function showRedirectLoading(url, openInBlank = false) {
 }
 function openEmojiOverlay() {
   const emojiOv = document.getElementById('emojiOverlay');
-  const emojiBtnRect = document.getElementById('emojiBtn').getBoundingClientRect();
-  emojiOv.style.position = 'absolute';
-  emojiOv.style.bottom = 'calc(100% + 10px)';
-  emojiOv.style.right = 0;
-  emojiOv.style.width = '300px';
-  emojiOv.style.height = 'auto';
-  emojiOv.style.background = 'var(--secondary-bg)';
-  emojiOv.style.borderRadius = '16px';
-  emojiOv.style.boxShadow = '0 4px 15px var(--shadow-color)';
-  emojiOv.style.padding = '12px';
-  emojiOv.style.zIndex = '10001';
   emojiOv.style.display = 'block';
+  emojiOv.classList.add('show');
+  setTimeout(() => {
+    document.querySelectorAll('.emoji-btn-grid').forEach((btn, index) => {
+      setTimeout(() => btn.classList.add('show'), index * 50);
+    });
+  }, 100);
 }
 function closeEmojiOverlay() {
   const emojiOv = document.getElementById('emojiOverlay');
@@ -2433,7 +2418,13 @@ function setupEmojiGrid() {
 function filterEmojis() {
   const search = document.getElementById('emojiSearch').value.toLowerCase();
   document.querySelectorAll('.emoji-btn-grid').forEach(btn => {
-    btn.style.display = btn.dataset.name.toLowerCase().includes(search) ? 'inline-flex' : 'none';
+    if (btn.dataset.name.toLowerCase().includes(search)) {
+      btn.style.display = 'inline-flex';
+      btn.classList.add('show');
+    } else {
+      btn.style.display = 'none';
+      btn.classList.remove('show');
+    }
   });
 }
 function showWarningPopup(message) {
@@ -2567,15 +2558,36 @@ function finalizeChat() {
 }
 function showFeedbackPopup() {
   const feedbackOv = document.getElementById('feedbackOverlay');
+  const oc = feedbackOv.querySelector('.oc');
+  oc.innerHTML = `
+    <div class="loading-spinner" style="margin: auto;"></div>
+  `;
   feedbackOv.style.display = 'flex';
   feedbackOv.classList.add('show');
-  selectedRating = 0;
-  document.getElementById('feedbackOptions').style.display = 'none';
-  document.getElementById('feedbackOptions').innerHTML = '';
-  document.getElementById('feedbackText').value = '';
-  loadingSpinner.style.display = 'block';
   setTimeout(() => {
-    loadingSpinner.style.display = 'none';
+    oc.innerHTML = `
+      <div class="close-x" onclick="closeFeedbackPopup()" role="button" aria-label="Fechar feedback">✕</div>
+      <h2>Avalie sua experiência</h2>
+      <p>Valorizamos o feedback de nossos usuários.</p>
+      <p>Qual sua nota para o chat ao vivo?</p>
+      <div class="rating-buttons">
+        <button onclick="selectRating(1)" style="background: #ff4d4d">1</button>
+        <button onclick="selectRating(2)" style="background: #ff7733">2</button>
+        <button onclick="selectRating(3)" style="background: #ffcc00">3</button>
+        <button onclick="selectRating(4)" style="background: #99cc00">4</button>
+        <button onclick="selectRating(5)" style="background: #4caf50">5</button>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+        <span>Ruim</span>
+        <span>Ótimo</span>
+      </div>
+      <div id="feedbackOptions" style="display:none; margin-top: 15px;">
+        <p id="feedbackTitle"></p>
+        <div id="checkboxes"></div>
+        <textarea id="feedbackText" placeholder="Escreva um feedback, como quiser" rows="3"></textarea>
+        <button onclick="sendFeedback()">Enviar</button>
+      </div>
+    `;
   }, 2000);
 }
 function closeFeedbackPopup() {
@@ -2583,57 +2595,50 @@ function closeFeedbackPopup() {
   feedbackOv.style.display = 'none';
   feedbackOv.classList.remove('show');
 }
-function selectRating(rating) {
-  selectedRating = rating;
-  const optionsDiv = document.getElementById('feedbackOptions');
-  optionsDiv.innerHTML = '';
-  optionsDiv.style.display = 'block';
+function selectRating(note) {
+  selectedRating = note;
+  const titleEl = document.getElementById('feedbackTitle');
+  const checkboxesEl = document.getElementById('checkboxes');
+  checkboxesEl.innerHTML = '';
   let title = '';
   let options = [];
-  if (rating <= 3) {
+  if (note <= 3) {
     title = 'Poxa, que pena! Ajuda a gente a evoluir?';
-    options = ['Resposta lenta', 'Informação incorreta', 'Interface confusa', 'Outros'];
-  } else if (rating === 4) {
+    options = ['Respostas lentas', 'Informações incorretas', 'Interface confusa', 'Outros'];
+  } else if (note === 4) {
     title = 'Podemos melhorar algo?';
-    options = ['Mais opções de ajuda', 'Melhor precisão', 'Interface', 'Outros'];
+    options = ['Mais opções de ajuda', 'Melhor precisão', 'Atualizar interface', 'Outros'];
   } else {
     title = 'O que você mais gostou?';
-    options = ['Rapidez', 'Precisão', 'Amigabilidade', 'Outros'];
+    options = ['Agilidade', 'Resolução de problema', 'Amigabilidade', 'Outros'];
   }
-  const p = document.createElement('p');
-  p.textContent = title;
-  p.style.color = rating <= 3 ? '#ff4d4d' : '#4caf50';
-  optionsDiv.appendChild(p);
+  titleEl.textContent = title;
   options.forEach(opt => {
     const label = document.createElement('label');
-    label.className = 'checkbox-label';
-    label.innerHTML = `
-      <input type="checkbox" value="${opt}">
-      ${opt}
-    `;
-    optionsDiv.appendChild(label);
+    label.innerHTML = `<input type="checkbox" value="${opt}"> ${opt}`;
+    checkboxesEl.appendChild(label);
   });
+  document.getElementById('feedbackOptions').style.display = 'block';
 }
-function submitFeedback() {
-  const text = document.getElementById('feedbackText').value;
-  if (text.length < 20 || text.length > 700) {
-    showWarningPopup('O feedback deve ter entre 20 e 700 caracteres.');
+function sendFeedback() {
+  const checks = Array.from(document.querySelectorAll('#checkboxes input:checked')).map(input => input.value);
+  if (selectedRating < 5 && checks.length === 0) {
+    alert('Selecione pelo menos uma opção');
     return;
   }
-  const checkboxes = document.querySelectorAll('#feedbackOptions input:checked');
-  if (selectedRating < 5 && checkboxes.length === 0) {
-    showWarningPopup('Selecione pelo menos uma opção.');
+  const text = document.getElementById('feedbackText').value.trim();
+  if (text && (text.length < 10 || text.length > 400)) {
+    alert('Feedback entre 10 e 400 caracteres');
     return;
   }
-  loadingSpinner.style.display = 'block';
+  // Simulate send
+  const oc = document.querySelector('#feedbackOverlay .oc');
+  oc.innerHTML = '<div class="loading-spinner" style="margin: auto;"></div>';
   setTimeout(() => {
-    loadingSpinner.style.display = 'none';
     am('Obrigado pelo feedback!');
     closeFeedbackPopup();
-    confetti({ particleCount: 100, spread: 70 });
-    if ('vibrate' in navigator) {
-      navigator.vibrate(50);
-    }
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    if ('vibrate' in navigator) navigator.vibrate(50);
   }, 2000);
 }
 function startGameDino() {
@@ -2644,6 +2649,7 @@ function startGameDino() {
   b.appendChild(canvas);
   inputBox.style.display = 'none';
   const ctx = canvas.getContext('2d');
+
   let dinoY = canvas.height - 50;
   let dinoVelocity = 0;
   const gravity = 0.5;
@@ -2653,12 +2659,14 @@ function startGameDino() {
   let cacti = [];
   let score = 0;
   let gameOver = false;
+
   function handleJump(e) {
     if ((e.key === ' ' || e.key === 'ArrowUp') && dinoY === canvas.height - 50) {
       dinoVelocity = jump;
     }
   }
   document.addEventListener('keydown', handleJump);
+
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     // Ground
@@ -2667,12 +2675,14 @@ function startGameDino() {
     ctx.fillRect(groundX + canvas.width, canvas.height - 20, canvas.width, 20);
     groundX -= groundSpeed;
     if (groundX <= -canvas.width) groundX = 0;
+
     // Dino
     ctx.fillStyle = 'green';
     ctx.fillRect(50, dinoY, 30, 50);
     dinoY += dinoVelocity;
     dinoVelocity += gravity;
     if (dinoY > canvas.height - 70) dinoY = canvas.height - 70;
+
     // Cacti
     if (Math.random() < 0.01) cacti.push({x: canvas.width, y: canvas.height - 50, width: 20, height: 30});
     cacti.forEach((c, i) => {
@@ -2682,10 +2692,12 @@ function startGameDino() {
       if (c.x < -c.width) cacti.splice(i, 1);
       if (c.x < 80 && c.x > 20 && dinoY > canvas.height - 80) gameOver = true;
     });
+
     // Score
     ctx.fillStyle = 'black';
     ctx.font = '20px Arial';
     ctx.fillText(`Score: ${score++}`, canvas.width - 100, 30);
+
     if (gameOver) {
       ctx.fillText('Game Over', canvas.width / 2 - 50, canvas.height / 2);
       const gameOverDiv = document.createElement('div');
@@ -2703,6 +2715,7 @@ function startGameDino() {
       b.appendChild(gameOverDiv);
       return;
     }
+
     requestAnimationFrame(draw);
   }
   draw();
